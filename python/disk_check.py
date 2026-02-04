@@ -2,7 +2,7 @@ import shutil
 import argparse
 from datetime import datetime
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description="Disk usage monitoring script")
 parser.add_argument("--path", default='/', help="Path to check disk usage")
 args = parser.parse_args()
 
