@@ -1,17 +1,23 @@
 #!/bin/bash
 
 echo "Running Disk Check..."
-python3 disk_check.py --path /
+USAGE=$(df / | tail -1 | awk '{print $5}' | tr -d '%')
 
-echo ""
-echo "Scanning logs..."
+echo "Disk Usage: $USAGE%"
 
-
-python3 log_scanner.py --file sample.log --keyword error
-
-if [ $? -ne 0 ]; then
+if [ $USAGE -gt 80 ]; then
 	echo ""
-	echo "SYSTEM STATUS: ATTENTION REQUIRED"	
+	echo "High disk usage detected. Scanning logs..."
+
+	python3 log_scanner.py --file /var/log/messages --keyword error
+
+	if [ $? -ne 0 ]; then
+		echo ""
+		echo "SYSTEM STATUS: ATTENTION REQUIRED"
+	else
+		echo ""
+		echo "SYSTEM STATUS: DISK HIGH BUT NO ERRORS"
+	fi
 else
 	echo ""
 	echo "SYSTEM STATUS: HEALTHY"
